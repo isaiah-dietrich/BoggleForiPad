@@ -79,14 +79,11 @@ function renderBoard(boardData){
     face.className = 'face face-top';
     face.style.transform = `rotate(${cell.rotation}deg)`; // rotate only the top face and its contents
 
-    // Create a circular recessed face for the letter to mimic stamped plastic
-    const recess = document.createElement('div');
-    recess.className = 'recess';
+    // Create the letter directly on the curved top surface (printed look)
     const letterEl = document.createElement('div');
     letterEl.className = 'letter';
     letterEl.textContent = cell.letter;
-    recess.appendChild(letterEl);
-    face.appendChild(recess);
+    face.appendChild(letterEl);
 
     const sideRight = document.createElement('div');
     sideRight.className = 'side side-right';
