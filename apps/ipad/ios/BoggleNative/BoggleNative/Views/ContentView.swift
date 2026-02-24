@@ -13,7 +13,15 @@ struct ContentView: View {
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
 
                 VStack {
+                    HStack {
+                        Spacer()
+                        BoardSizeToggle(selectedSize: $viewModel.boardSize)
+                            .padding(.trailing, 24)
+                            .padding(.top, 16)
+                    }
+
                     Spacer()
+
                     HStack {
                         Spacer()
                         ShuffleButton {
@@ -25,6 +33,28 @@ struct ContentView: View {
                 }
             }
         }
+    }
+}
+
+private struct BoardSizeToggle: View {
+    @Binding var selectedSize: BoggleBoardSize
+
+    var body: some View {
+        Picker("Board size", selection: $selectedSize) {
+            ForEach(BoggleBoardSize.allCases) { size in
+                Text(size.title).tag(size)
+            }
+        }
+        .pickerStyle(.segmented)
+        .frame(width: 160)
+        .padding(6)
+        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 14, style: .continuous)
+                .stroke(Color.white.opacity(0.65), lineWidth: 1)
+        )
+        .shadow(color: Color.black.opacity(0.18), radius: 10, x: 0, y: 5)
+        .accessibilityLabel("Board size")
     }
 }
 

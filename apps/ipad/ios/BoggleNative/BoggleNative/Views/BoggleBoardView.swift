@@ -4,13 +4,14 @@ struct BoggleBoardView: View {
     let tiles: [BoggleTile]
     let containerSize: CGSize
 
-    private let columns = Array(repeating: GridItem(.flexible(), spacing: 12), count: 4)
-
     var body: some View {
-        // Layout scaling decisions:
-        // Keep board square and size it from the shorter edge so landscape iPads
-        // consistently preserve the physical tray proportions.
-        let boardSide = min(containerSize.width * 0.82, containerSize.height * 0.90)
+        // Layout is driven from dice/tile count so 4x4 and 5x5 share one implementation.
+        let gridDimension = BoggleBoardGenerator.gridDimension(for: tiles.count)
+        let boardSide = min(containerSize.width * 0.86, containerSize.height * 0.90)
+        let gridSpacing = boardSide * (gridDimension == 5 ? 0.014 : 0.018)
+        let gridPadding = boardSide * (gridDimension == 5 ? 0.042 : 0.048)
+        let columns = Array(repeating: GridItem(.flexible(), spacing: gridSpacing), count: gridDimension)
+        let usesQuDigraph = gridDimension == 5
 
         ZStack {
             RoundedRectangle(cornerRadius: boardSide * 0.06, style: .continuous)
@@ -32,13 +33,13 @@ struct BoggleBoardView: View {
                 .shadow(color: Color.black.opacity(0.26), radius: 30, x: 7, y: 15)
                 .shadow(color: Color.black.opacity(0.12), radius: 8, x: -3, y: -2)
 
-            LazyVGrid(columns: columns, spacing: boardSide * 0.018) {
+            LazyVGrid(columns: columns, spacing: gridSpacing) {
                 ForEach(tiles) { tile in
-                    BoggleTileView(tile: tile)
+                    BoggleTileView(tile: tile, usesQuDigraph: usesQuDigraph)
                         .aspectRatio(1, contentMode: .fit)
                 }
             }
-            .padding(boardSide * 0.048)
+            .padding(gridPadding)
         }
         .frame(width: boardSide, height: boardSide)
     }

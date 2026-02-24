@@ -3,21 +3,24 @@ import Foundation
 enum BoggleBoardGenerator {
     static let allowedRotations: [Double] = [0, 90, 180, 270]
 
+    // One generation pipeline is reused for both board sizes.
+    static func generateBoard(for boardSize: BoggleBoardSize) -> [BoggleTile] {
+        generateBoard(using: boardSize.dice)
+    }
+
     static func generateBoard(using dice: [BoggleDie]) -> [BoggleTile] {
-        // Dice shuffling logic:
-        // Shuffle the 16 dice so their board positions are unbiased each round.
         let shuffledDice = dice.shuffled()
 
         return shuffledDice.map { die in
-            // Letter selection logic:
-            // Pick one random face from the current die, equivalent to rolling it.
             let letter = die.faces.randomElement() ?? "?"
-
-            // Letter rotation logic:
-            // Rotate each tile to one of the four cardinal orientations.
             let rotation = allowedRotations.randomElement() ?? 0
-
             return BoggleTile(letter: letter, rotation: rotation)
         }
+    }
+
+    // Grid dimension is derived from dice/tile count (16 -> 4, 25 -> 5).
+    static func gridDimension(for tileCount: Int) -> Int {
+        let root = Int(Double(tileCount).squareRoot())
+        return root * root == tileCount ? root : 4
     }
 }
