@@ -1,10 +1,7 @@
 # iPad App
 
-This folder is reserved for the iPad application.
+Native iPad SwiftUI implementation lives in:
 
-## Suggested Layout
+- `ios/BoggleNative`
 
-- `ios/`: Xcode project and native iOS files
-- `src/`: App-specific source used by your iPad target (if using Capacitor or a hybrid setup)
-
-Initialize your chosen iPad stack here (SwiftUI native or Capacitor wrapper).
+This includes app entry, models, view model, views, and iPad landscape/full-screen plist settings.
