@@ -1,0 +1,106 @@
+:root{
+  --tray-blue: #0b3b73; /* deep blue similar to Boggle tray */
+  --tile-cream: #f6f1e6;
+  --tile-shadow: rgba(20,40,80,0.25);
+  --letter-blue: #052b55;
+}
+html,body,#app{
+  height:100%;
+  margin:0;
+}
+body{
+  background: radial-gradient(ellipse at center, #062a54 0%, #021427 100%);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+}
+.tray{
+  height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:2vh 2vw;
+  box-sizing:border-box;
+}
+.board{
+  /* make board square and as large as possible while fitting viewport */
+  width: min(92vh, 96vw);
+  height: min(92vh, 96vw);
+  background: linear-gradient(180deg, var(--tray-blue), #062a54 60%);
+  border-radius:18px;
+  padding:3.2vmin;
+  box-sizing:border-box;
+  display:grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: repeat(4, 1fr);
+  gap:1.2vmin;
+  align-items:center;
+  justify-items:center;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.45), inset 0 -6px 10px rgba(0,0,0,0.12);
+}
+.tile{
+  width:100%;
+  height:100%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background: linear-gradient(180deg, var(--tile-cream), #efe9db 60%);
+  border-radius:12px;
+  box-shadow: 0 6px 10px var(--tile-shadow), inset 0 -6px 10px rgba(255,255,255,0.6);
+  perspective: 800px;
+  transform-style: preserve-3d;
+  position:relative;
+}
+.tile::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  border-radius:12px;
+  box-shadow: 0 10px 18px rgba(0,0,0,0.12) inset;
+  pointer-events:none;
+}
+.face{
+  width:100%;
+  height:100%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:800;
+  color: var(--letter-blue);
+  font-size: 9vmin; /* large, scales with viewport for readability across table */
+  user-select:none;
+  transform-origin:center center;
+}
+.shuffle{
+  position:fixed;
+  right:1.6vmin;
+  bottom:1.6vmin;
+  width:44px;
+  height:44px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:50%;
+  border:none;
+  background: rgba(255,255,255,0.85);
+  box-shadow: 0 6px 14px rgba(0,0,0,0.25);
+  font-size:18px;
+  cursor:pointer;
+}
+.shuffle:active{ transform: translateY(1px); }
+.rotate-hint{
+  position:fixed;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background: rgba(0,0,0,0.5);
+  color:#fff;
+  font-size: 4vmin;
+  text-align:center;
+  padding:2vmin;
+}
+
+@media (max-aspect-ratio: 4/3) { /* tall screens / portrait */
+  .board{ width: min(92vw, 96vh); height: min(92vw, 96vh); }
+}
