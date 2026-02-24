@@ -1,0 +1,12 @@
+{
+  "name": "boggle-monorepo",
+  "private": true,
+  "version": "0.1.0",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "start:web": "echo 'Serve apps/web with your preferred static server'"
+  }
+}
