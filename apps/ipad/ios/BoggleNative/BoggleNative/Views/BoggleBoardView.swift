@@ -3,15 +3,20 @@ import SwiftUI
 struct BoggleBoardView: View {
     let tiles: [BoggleTile]
     let containerSize: CGSize
+    let isModeSwitching: Bool
+    let shuffleRotation: Double
 
     var body: some View {
         // Layout is driven from dice/tile count so 4x4 and 5x5 share one implementation.
         let gridDimension = BoggleBoardGenerator.gridDimension(for: tiles.count)
-        let boardSide = min(containerSize.width * 0.86, containerSize.height * 0.90)
+        let boardScaleBase: CGFloat = gridDimension == 5 ? 0.89 : 0.86
+        let boardSide = min(containerSize.width * boardScaleBase, containerSize.height * 0.90)
         let gridSpacing = boardSide * (gridDimension == 5 ? 0.014 : 0.018)
         let gridPadding = boardSide * (gridDimension == 5 ? 0.042 : 0.048)
         let columns = Array(repeating: GridItem(.flexible(), spacing: gridSpacing), count: gridDimension)
         let usesQuDigraph = gridDimension == 5
+        let transitionScale: CGFloat = isModeSwitching ? 0.93 : 1.0
+        let transitionOpacity: Double = isModeSwitching ? 0.88 : 1.0
 
         ZStack {
             RoundedRectangle(cornerRadius: boardSide * 0.06, style: .continuous)
@@ -40,7 +45,11 @@ struct BoggleBoardView: View {
                 }
             }
             .padding(gridPadding)
+            .scaleEffect(transitionScale)
+            .opacity(transitionOpacity)
         }
         .frame(width: boardSide, height: boardSide)
+        .rotationEffect(.degrees(shuffleRotation))
+        .opacity(transitionOpacity)
     }
 }

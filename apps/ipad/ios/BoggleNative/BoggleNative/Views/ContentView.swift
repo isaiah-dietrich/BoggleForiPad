@@ -9,13 +9,24 @@ struct ContentView: View {
                 WoodSurfaceBackground()
                     .ignoresSafeArea()
 
-                BoggleBoardView(tiles: viewModel.tiles, containerSize: geo.size)
+                BoggleBoardView(
+                    tiles: viewModel.tiles,
+                    containerSize: geo.size,
+                    isModeSwitching: viewModel.isModeSwitching,
+                    shuffleRotation: viewModel.shuffleRotation
+                )
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
 
                 VStack {
                     HStack {
                         Spacer()
-                        BoardSizeToggle(selectedSize: $viewModel.boardSize)
+                        BoardSizeToggle(
+                            selectedSize: Binding(
+                                get: { viewModel.boardSize },
+                                set: { viewModel.setBoardSize($0) }
+                            ),
+                            isDisabled: viewModel.isModeSwitching
+                        )
                             .padding(.trailing, 24)
                             .padding(.top, 16)
                     }
@@ -38,6 +49,7 @@ struct ContentView: View {
 
 private struct BoardSizeToggle: View {
     @Binding var selectedSize: BoggleBoardSize
+    let isDisabled: Bool
 
     var body: some View {
         Picker("Board size", selection: $selectedSize) {
@@ -55,6 +67,8 @@ private struct BoardSizeToggle: View {
         )
         .shadow(color: Color.black.opacity(0.18), radius: 10, x: 0, y: 5)
         .accessibilityLabel("Board size")
+        .disabled(isDisabled)
+        .opacity(isDisabled ? 0.75 : 1.0)
     }
 }
 
