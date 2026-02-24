@@ -18,3 +18,8 @@ How to use:
 Notes:
 - The app attempts to lock orientation using the Screen Orientation API when possible. Some browsers require the page to be added to the home screen or require a user gesture for locking to work.
 - All logic runs client-side in `script.js`.
+ - The app will attempt to keep the screen awake using the Screen Wake Lock API when available. The wake lock typically requires a user gesture (tapping the board or shuffle button) and is best-effort — older Safari versions may not support it.
+ - If the Wake Lock API is unavailable the app will still function as a shared board but device sleep cannot be programmatically prevented reliably on all browsers.
+ - Cross-browser behavior: when the Wake Lock API is unavailable the app attempts a lightweight Web Audio fallback (a silent looping audio buffer started after a user gesture). This works in many modern browsers but is not guaranteed on every platform.
+ - If both mechanisms are unavailable, the app will still function; users should disable auto-lock in their device settings to avoid sleep during play.
+ - To use the supplied wood tabletop background image, place the image at `assets/wood.jpg` relative to the project root. The CSS will use this file as the page background. If the image is not present a warm gradient fallback will be shown.

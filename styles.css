@@ -1,16 +1,28 @@
 :root{
-  --tray-blue: #0b3b73; /* deep blue similar to Boggle tray */
-  --tile-cream: #f6f1e6;
-  --tile-shadow: rgba(20,40,80,0.25);
-  --letter-blue: #052b55;
+  --tray-blue: #08325f; /* deep blue tray, tuned to photo */
+  --tray-edge: #052443;
+  --tile-cream: #f2ead8; /* slightly warmer cream */
+  --tile-shadow: rgba(20,40,60,0.18);
+  --letter-blue: #04224a; /* darker blue for letters */
 }
 html,body,#app{
   height:100%;
   margin:0;
 }
+.body-surface{
+  position:fixed;
+  inset:0;
+  background: linear-gradient(180deg,#efe7dc,#f7efe4 60%);
+}
 body{
-  background: radial-gradient(ellipse at center, #062a54 0%, #021427 100%);
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+  /* Background image: place a wood texture at assets/wood.jpg */
+  background-image: url('assets/wood.jpg');
+  background-repeat: no-repeat;
+  background-position: center top;
+  background-size: cover;
+  /* Fallback warm wood-like repeating gradient if image is missing */
+  background-color: #f3e0c9;
+  font-family: 'Helvetica Neue', Arial, 'Segoe UI', Roboto, -apple-system;
   -webkit-font-smoothing:antialiased;
   -moz-osx-font-smoothing:grayscale;
 }
@@ -19,45 +31,80 @@ body{
   display:flex;
   align-items:center;
   justify-content:center;
-  padding:2vh 2vw;
+  padding:6vmin;
   box-sizing:border-box;
 }
 .board{
   /* make board square and as large as possible while fitting viewport */
   width: min(92vh, 96vw);
   height: min(92vh, 96vw);
-  background: linear-gradient(180deg, var(--tray-blue), #062a54 60%);
-  border-radius:18px;
-  padding:3.2vmin;
+  /* subtle lighting: top-left light -> slightly lighter top-left, darker bottom-right */
+  position: relative;
+  z-index: 2;
+  background: linear-gradient(145deg, #0e4a77 0%, var(--tray-blue) 52%, #04273f 100%);
+  border-radius:26px; /* thick rounded plastic tray */
+  padding:3vmin; /* inner padding where tiles sit */
   box-sizing:border-box;
   display:grid;
   grid-template-columns: repeat(4, 1fr);
   grid-template-rows: repeat(4, 1fr);
-  gap:1.2vmin;
+  gap:1.2vmin; /* tighter gap to match physical set */
   align-items:center;
   justify-items:center;
-  box-shadow: 0 12px 30px rgba(0,0,0,0.45), inset 0 -6px 10px rgba(0,0,0,0.12);
+  /* soft ambient cast shadows (two layers) to ground the tray on the wood */
+  box-shadow:
+    0 28px 50px rgba(2,12,30,0.14),
+    0 10px 22px rgba(2,12,30,0.08),
+    /* gentle inner rim to suggest molded plastic depth (highlight top-left, shadow bottom-right) */
+    inset 10px 10px 24px rgba(255,255,255,0.03),
+    inset -8px -8px 18px rgba(0,0,0,0.08);
+}
+
+/* contact shadow: wide, diffused, subtle to make the board sit on the wood */
+.board::before{
+  content: "";
+  position: absolute;
+  left: -6%;
+  right: -2%;
+  top: 58%;
+  height: 42%;
+  border-radius: 34px;
+  background: radial-gradient(60% 40% at 68% 70%, rgba(0,0,0,0.18) 0%, rgba(0,0,0,0.08) 30%, rgba(0,0,0,0.02) 60%, transparent 100%);
+  filter: blur(18px);
+  transform: translate(6px,10px); /* shadow falls slightly bottom-right from top-left light */
+  z-index: 0;
+  pointer-events: none;
 }
 .tile{
   width:100%;
   height:100%;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  background: linear-gradient(180deg, var(--tile-cream), #efe9db 60%);
-  border-radius:12px;
-  box-shadow: 0 6px 10px var(--tile-shadow), inset 0 -6px 10px rgba(255,255,255,0.6);
-  perspective: 800px;
-  transform-style: preserve-3d;
   position:relative;
+  perspective: 900px;
+  transform-style: preserve-3d;
+}
+
+.tile::before{
+  /* subtle cast shadow on the tray beneath the tile */
+  content: "";
+  position: absolute;
+  left: 6%;
+  top: 6%;
+  right: 6%;
+  bottom: 6%;
+  border-radius: 8%;
+  z-index:1;
+  box-shadow: 0 10px 18px rgba(0,0,0,0.18);
+  opacity: 0.9;
+  pointer-events: none;
 }
 .tile::after{
-  content:"";
-  position:absolute;
-  inset:0;
-  border-radius:12px;
-  box-shadow: 0 10px 18px rgba(0,0,0,0.12) inset;
-  pointer-events:none;
+  /* subtle global inset to smooth edges */
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 10%;
+  box-shadow: 0 10px 18px rgba(0,0,0,0.08) inset;
+  pointer-events: none;
 }
 .face{
   width:100%;
@@ -65,11 +112,80 @@ body{
   display:flex;
   align-items:center;
   justify-content:center;
-  font-weight:800;
+  font-weight:900;
   color: var(--letter-blue);
-  font-size: 9vmin; /* large, scales with viewport for readability across table */
+  /* use clamp for consistent size across devices */
+  font-size: clamp(28px, 6.5vmin, 96px);
   user-select:none;
   transform-origin:center center;
+}
+.face-top{
+  position:relative;
+  z-index:3;
+  /* inset top face so sides show; slightly smaller than tile container */
+  width: 86%;
+  height: 86%;
+  margin: auto;
+  background: linear-gradient(180deg, var(--tile-cream), #efe7d6 62%);
+  border-radius:12%;
+  /* top face bevel + subtle gloss */
+  box-shadow:
+    0 14px 22px rgba(2,10,30,0.10),
+    inset -6px -6px 14px rgba(255,255,255,0.65),
+    inset 6px 6px 12px rgba(0,0,0,0.06);
+  -webkit-font-smoothing:antialiased;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+/* recessed circular stamp */
+.recess{
+  width:74%;
+  height:74%;
+  border-radius:50%;
+  background: linear-gradient(180deg,#f0e8d6,#e8ddc7);
+  box-shadow: inset 0 6px 10px rgba(0,0,0,0.12), inset 0 -6px 8px rgba(255,255,255,0.6);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.letter{
+  font-weight:900;
+  /* Much larger letters that fill most of the recessed face */
+  font-size: clamp(36px, 12vmin, 160px);
+  color: var(--letter-blue);
+  transform: translateY(-1px);
+  -webkit-font-smoothing:antialiased;
+}
+
+/* Side faces to simulate a raised cube */
+.side{
+  position:absolute;
+  z-index:2;
+  pointer-events:none;
+}
+.side-right{
+  right: -6.5%;
+  top: 7%;
+  width: 13%;
+  height: 86%;
+  transform: skewY(-10deg) scaleY(0.995);
+  border-radius: 0 8px 8px 0;
+  /* darker thin face matching subtle plastic side */
+  background: linear-gradient(90deg, rgba(0,0,0,0.12), rgba(0,0,0,0.02));
+  box-shadow: -4px 0 6px rgba(0,0,0,0.08) inset;
+}
+.side-bottom{
+  left: 7%;
+  bottom: -6.5%;
+  width: 86%;
+  height: 13%;
+  transform: skewX(-10deg) scaleX(0.995);
+  border-radius: 0 0 8px 8px;
+  background: linear-gradient(180deg, rgba(0,0,0,0.14), rgba(0,0,0,0.02));
+  box-shadow: 0 -4px 6px rgba(0,0,0,0.06) inset;
 }
 .shuffle{
   position:fixed;
@@ -88,19 +204,12 @@ body{
   cursor:pointer;
 }
 .shuffle:active{ transform: translateY(1px); }
-.rotate-hint{
-  position:fixed;
-  inset:0;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  background: rgba(0,0,0,0.5);
-  color:#fff;
-  font-size: 4vmin;
-  text-align:center;
-  padding:2vmin;
+.shuffle img{
+  width:60%;
+  height:60%;
+  object-fit:contain;
+  display:block;
 }
-
 @media (max-aspect-ratio: 4/3) { /* tall screens / portrait */
   .board{ width: min(92vw, 96vh); height: min(92vw, 96vh); }
 }
